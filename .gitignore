@@ -1,0 +1,32 @@
+# ── 凭据与隐私：绝对不能入库 ──────────────────────
+cookies.txt
+config.ini
+cache.json
+*.log
+chaoxing.log
+
+# ── 构建中间产物与运行时 ────────────────────────
+_runtime/
+_下载/
+_交付/
+dist/
+build/
+*.spec
+
+# ── Python 惯例 ────────────────────────────────
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+
+# ── 编辑器 / 系统 ──────────────────────────────
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# ── 交付压缩包（产物走 GitHub Release，不进历史） ──
+*.zip

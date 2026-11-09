@@ -395,7 +395,11 @@ class Chaoxing:
         if login_with_cookies:
             logger.info("Logging in with cookies")
             SessionManager.update_cookies()
-            logger.debug(f"Logged in with cookies: {SessionManager.get_instance()._session.cookies}")
+            # 安全：绝不把 session.cookies 打进日志。
+            # 本项目日志写死 level="TRACE"（logger.py），DEBUG 会被落盘到
+            # chaoxing.log，等于把 _uid / uf / p_auth_token 明文写进磁盘。
+            # 只记录条数，够排查用。
+            logger.debug(f"Logged in with cookies: {len(SessionManager.get_instance()._session.cookies)} keys")
             if not self._validate_cookie_session():
                 logger.warning("Cookie 登录校验失败，尝试使用账号密码重新登录")
                 if self.account and self.account.username and self.account.password:

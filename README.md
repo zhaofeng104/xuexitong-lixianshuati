@@ -83,6 +83,9 @@ python -m app.ui
 │   ├── resource/             字体映射表
 │   ├── LICENSE               GPL-3.0 原文
 │   └── README.md             上游说明
+├── tests/                    测试（不依赖 Tkinter，无图形环境可跑）
+│   ├── test_redact.py        诊断包脱敏，16 个用例
+│   └── README.md             测试说明
 ├── LICENSE                   本项目整体许可证（GPL-3.0 + 版权头）
 ├── NOTICE.md                 **完整第三方版权声明（必读）**
 ├── CHANGELOG.md              版本变更与九项修复明细
@@ -102,6 +105,7 @@ python -m app.ui
 | [CHANGELOG.md](CHANGELOG.md) | 版本变更，含九项修复的逐条对照表 |
 | [AGENTS.md](AGENTS.md) | 工程约定：`core/` 与 `app/` 的边界、提交与发布流程 |
 | [LESSONS.md](LESSONS.md) | 已证实的踩坑记录与防错规约 |
+| [tests/README.md](tests/README.md) | 测试跑法与覆盖范围 |
 
 ## 构建交付包
 

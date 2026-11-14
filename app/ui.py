@@ -151,7 +151,7 @@ class App(tk.Tk):
         ttk.Label(header, text=APP_TITLE, style="Title.TLabel").pack(side="left")
         ttk.Label(
             header,
-            text="内核 Samueli924/chaoxing (GPL-3.0)  ·  本机独立运行，不上传任何数据",
+            text="内核 Samueli924/chaoxing (GPL-3.0)  ·  不上传本地文件；题库答题时题目原文发往所选服务",
             style="Sub.TLabel",
         ).pack(side="left", padx=(12, 0), pady=(6, 0))
         ttk.Button(header, text="说明", style="Small.TButton",
@@ -764,6 +764,16 @@ class App(tk.Tk):
                 head = line.split(":", 1)[0]
                 lines.append(f"{head}: ***已隐藏***")
                 continue
+            # loguru 直接打印的会话对象，形如
+            #   | DEBUG | Logged in with cookies: <RequestsCookieJar[_uid=1, uf=2]>
+            # 不含 "cookie:" 前缀、也不是 key=value，前两条规则都盖不住，
+            # 这里按「cookies」关键词 + 冒号后整体替换兜底（LESSONS.md S1）。
+            if "cookies" in low and ":" in line:
+                head = line.split(":", 1)[0]
+                tail = line.split(":", 1)[1]
+                if "=" in tail or "jar" in low:
+                    lines.append(f"{head}: ***已隐藏***")
+                    continue
             # ini 风格的 key = value
             m = re.match(r"^(\s*)([A-Za-z0-9_]+)(\s*=\s*)(.+)$", line)
             if m and self._is_secret_key(m.group(2)):

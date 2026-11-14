@@ -4,6 +4,46 @@
 
 ---
 
+## [1.0.1] - 2026-11-15
+
+安全修复版。三处改动，全部有实测验证。
+
+### 安全
+
+- **开启 TLS 证书校验（5 处）**
+  - `core/api/captcha.py:89` —— 该处带着用户的 `Cookie` 头请求超星验证码，
+    却关闭了证书校验，在校园 WiFi / 公共热点下可被中间人劫持
+  - `core/api/answer.py` 四处（`TikuYanxi` / `TikuLike` ×2 / `TikuAdapter`）
+    —— 会把题目原文 POST 出去
+  - 实测：三个题库域名在 `verify=True` 下均返回 200，原先的 `verify=False` 并非必需
+
+- **修正界面隐私表述**
+  - `app/ui.py:154` 原写「本机独立运行，不上传任何数据」，
+    而实际存在四条外发链路（超星主站、`detect.chaoxing.com` 心跳、题库、AI 接口）
+  - 改为「不上传本地文件；题库答题时题目原文发往所选服务」
+
+- **修补 `_redact()` 的漏网格式**
+  - 原实现只覆盖 `Cookie:` 头与 `key = value` 两种形态，
+    **漏掉了 loguru 直接打印的 `<RequestsCookieJar[_uid=1, uf=2]>`**
+    —— 这正是 LESSONS.md S1 记录的泄露形态
+  - 新增「含 cookies 关键词 + 冒号后带 `=` 或 `jar`」的兜底规则
+
+### 新增
+
+- **`tests/` 测试目录**，首个文件 `test_redact.py`（16 个用例）
+  - 覆盖 HTTP 头、ini 风格、URL 查询串、loguru 会话对象四类
+  - 含反向断言：`use_cookies = true`、章节标题等普通内容不能被误伤
+  - 不依赖 Tkinter（用 `__new__` 绕过 `__init__`），无图形环境也能跑
+
+### 验证
+
+```bash
+_runtime\python.exe -m unittest discover -s tests -v
+# Ran 16 tests ... OK
+```
+
+---
+
 ## [1.0.0] - 2026-11-09
 
 首个公开版本。相比上游命令行内核，这一版做了三件事：**加界面、补内核缺陷、做成可交付的绿色包**。

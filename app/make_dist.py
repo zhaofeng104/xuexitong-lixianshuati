@@ -131,13 +131,25 @@ def main() -> int:
         say("请先确认 _runtime\\python.exe 存在。")
         return 1
 
-    # 1. 重建 core
-    step(1, total, "重建 core\\（从 _下载\\src 复制上游源码）")
-    code, out = run([PYTHON, os.path.join(ROOT, "app", "build.py")])
-    say(out.rstrip())
-    if code != 0:
-        say(f"\n[失败] build.py 退出码 {code}，终止。")
-        return 1
+    # 1. 重建 core（仅当上游源码副本存在时才做）
+    #
+    # 踩过的坑（LESSONS.md B1）：_下载\src\chaoxing-main 是上游源码副本，
+    # 不随项目长期保留。它一旦被清理，本脚本第 1 步就直接 return 1 退出，
+    # 明明 core\ 已经是打完补丁的最终态、根本不需要重建。
+    # 现在改为：没有上游源就跳过重建并明说，不再让整个打包流程挂在这一步。
+    SRC_UPSTREAM = os.path.join(ROOT, "_下载", "src", "chaoxing-main")
+    if os.path.isdir(SRC_UPSTREAM):
+        step(1, total, "重建 core\\（从 _下载\\src 复制上游源码）")
+        code, out = run([PYTHON, os.path.join(ROOT, "app", "build.py")])
+        say(out.rstrip())
+        if code != 0:
+            say(f"\n[失败] build.py 退出码 {code}，终止。")
+            return 1
+    else:
+        step(1, total, "跳过重建 core\\（无上游源码副本）")
+        say(f"  未找到 {SRC_UPSTREAM}")
+        say("  core\\ 视为最终态直接打包。")
+        say("  注意：重建会丢掉 core\\api\\pause.py 等源码级补丁，跳过通常才是对的。")
 
     # 2. 编译启动器 exe
     #

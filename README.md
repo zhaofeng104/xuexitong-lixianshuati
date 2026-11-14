@@ -86,10 +86,48 @@ python -m app.ui
 ├── LICENSE                   本项目整体许可证（GPL-3.0 + 版权头）
 ├── NOTICE.md                 **完整第三方版权声明（必读）**
 ├── CHANGELOG.md              版本变更与九项修复明细
+├── AGENTS.md                 协作与工程约定（给 AI 助手和协作者）
+├── LESSONS.md                已证实的踩坑与防错规约
 ├── 总说明.md                  完整使用手册（参数、排障、FAQ）
 ├── 启动.bat / 关闭程序.bat     命令行入口与急救脚本
 └── 环境自检.bat               依赖体检
 ```
+
+### 项目文档
+
+| 文档 | 内容 |
+|---|---|
+| [总说明.md](总说明.md) | 用户手册：三步上手、参数解释、排障、FAQ |
+| [NOTICE.md](NOTICE.md) | 第三方版权与许可，**贡献前必读** |
+| [CHANGELOG.md](CHANGELOG.md) | 版本变更，含九项修复的逐条对照表 |
+| [AGENTS.md](AGENTS.md) | 工程约定：`core/` 与 `app/` 的边界、提交与发布流程 |
+| [LESSONS.md](LESSONS.md) | 已证实的踩坑记录与防错规约 |
+
+## 构建交付包
+
+### 快速打包（推荐）
+
+```bash
+python make_release.py
+```
+
+产出 `dist/学习通刷课助手-vX.Y.Z-win64.zip`，并自动完成体积统计、
+关键文件核对、隐私文件复查（`config.ini` / `cookies.txt` / `chaoxing.log` / `cache.json`）。
+
+适用于 `core/` 已是最终态、不需要从上游重建的场景。
+
+### 完整构建链
+
+```bash
+python app/build.py       # 从上游源码重建 core/（需 _下载/src/chaoxing-main）
+python app/check_env.py   # 依赖自检
+python app/make_dist.py   # 生成 _交付/学习通刷课助手.zip
+```
+
+> ⚠️ `build.py` 依赖 `_下载/src/chaoxing-main`（上游源码副本，**不随本仓库分发**）。
+> 仓库里没有这个目录时 `make_dist.py` 会在第 1 步直接退出 —— 这不是 bug，
+> 而是因为 `core/` 本身已含全部补丁，不该被上游未打补丁的版本覆盖。
+> 只想出包就用上面的 `make_release.py`。
 
 ## 这一版修了什么
 
